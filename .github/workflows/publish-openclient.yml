@@ -18,7 +18,6 @@ jobs:
     outputs:
       build: ${{ steps.check.outputs.build }}
       sha: ${{ steps.check.outputs.sha }}
-      version: ${{ steps.check.outputs.version }}
       date: ${{ steps.check.outputs.date }}
     steps:
       - id: check
@@ -35,7 +34,6 @@ jobs:
           CURRENT="$(curl -fsSL https://raw.githubusercontent.com/wes1993/altstore-repo/main/state/upstream-sha.txt 2>/dev/null || true)"
           echo "sha=$SHA" >> "$GITHUB_OUTPUT"
           echo "date=$DATE" >> "$GITHUB_OUTPUT"
-          echo "version=0.0.${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
           if [ "$SHA" != "$CURRENT" ] && [ "$AGE" -ge 14400 ]; then
             echo "build=true" >> "$GITHUB_OUTPUT"
           else
@@ -90,6 +88,10 @@ jobs:
           cp -R "$APP_PATH" Payload/
           zip -qry OpenClient-Personal.ipa Payload
           echo "IPA_SIZE=$(stat -f%z OpenClient-Personal.ipa)" >> "$GITHUB_ENV"
+          PLIST="$APP_PATH/Info.plist"
+          echo "APP_VERSION=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$PLIST")" >> "$GITHUB_ENV"
+          echo "APP_BUILD=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$PLIST")" >> "$GITHUB_ENV"
+          echo "APP_BUNDLE_ID=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$PLIST")" >> "$GITHUB_ENV"
 
       - name: Checkout source repository
         uses: actions/checkout@v4
@@ -101,7 +103,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           UPSTREAM_SHA: ${{ needs.check.outputs.sha }}
           UPSTREAM_DATE: ${{ needs.check.outputs.date }}
-          VERSION: ${{ needs.check.outputs.version }}
         run: |
           set -euo pipefail
           cd source-repo
@@ -113,26 +114,16 @@ jobs:
             --notes "Automated personal build from upstream commit ${UPSTREAM_SHA}."
           URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/$TAG/OpenClient-Personal.ipa"
           DATE="$(date -u +%Y-%m-%d)"
-          jq --arg version "$VERSION" \
+          jq --arg version "$APP_VERSION" \
+             --arg build "$APP_BUILD" \
+             --arg bundle "$APP_BUNDLE_ID" \
              --arg date "$DATE" \
              --arg url "$URL" \
              --arg sha "$UPSTREAM_SHA" \
              --argjson size "$IPA_SIZE" \
-             '.apps = [{
-               "name":"OpenClient",
-               "bundleIdentifier":"com.ntoporcov.openclient",
-               "developerName":"OpenClient",
-               "subtitle":"Personal non-commercial build",
-               "localizedDescription":"Automated personal build from the upstream OpenClient source.",
-               "iconURL":"https://raw.githubusercontent.com/ntoporcov/openclient/main/OpenCodeIOSClient/Assets.xcassets/AppIcon.appiconset/icon-1024.png",
-               "versions":[{
-                 "version":$version,
-                 "date":$date,
-                 "downloadURL":$url,
-                 "size":$size,
-                 "localizedDescription":("Upstream commit " + $sha)
-               }]
-             }]' apps.json > apps.tmp
+             '.apps = (if (.apps | length) == 0 then [{"name":"OpenClient","bundleIdentifier":$bundle,"developerName":"OpenClient","subtitle":"Personal non-commercial build","localizedDescription":"Automated personal build from the upstream OpenClient source.","iconURL":"https://raw.githubusercontent.com/ntoporcov/openclient/main/OpenCodeIOSClient/Assets.xcassets/AppIcon.appiconset/icon-1024.png","versions":[]}] else .apps end) |
+              .apps[0].bundleIdentifier = $bundle |
+              .apps[0].versions = ([{"version":$version,"buildVersion":$build,"date":$date,"downloadURL":$url,"size":$size,"localizedDescription":("Upstream commit " + $sha)}] + [.apps[0].versions[] | select(.downloadURL != $url)])' apps.json > apps.tmp
           mv apps.tmp apps.json
           mkdir -p state
           printf '%s\n' "$UPSTREAM_SHA" > state/upstream-sha.txt
