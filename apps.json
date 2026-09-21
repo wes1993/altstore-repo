@@ -2,6 +2,24 @@
   "name": "wes1993 AltStore Repo",
   "identifier": "com.wes1993.altstore-repo",
   "sourceURL": "https://raw.githubusercontent.com/wes1993/altstore-repo/main/apps.json",
-  "apps": [],
+  "apps": [
+    {
+      "name": "OpenClient",
+      "bundleIdentifier": "com.ntoporcov.openclient",
+      "developerName": "OpenClient",
+      "subtitle": "Personal non-commercial build",
+      "localizedDescription": "Automated personal build from the upstream OpenClient source.",
+      "iconURL": "https://raw.githubusercontent.com/ntoporcov/openclient/main/OpenCodeIOSClient/Assets.xcassets/AppIcon.appiconset/icon-1024.png",
+      "versions": [
+        {
+          "version": "0.0.1",
+          "date": "2026-09-21",
+          "downloadURL": "https://github.com/wes1993/altstore-repo/releases/download/openclient-491a4d92647f/OpenClient-Personal.ipa",
+          "size": 51918244,
+          "localizedDescription": "Upstream commit 491a4d92647ff3e7d5ca5cf4a08917970348fb5f"
+        }
+      ]
+    }
+  ],
   "news": []
 }
