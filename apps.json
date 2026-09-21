@@ -12,6 +12,14 @@
       "iconURL": "https://raw.githubusercontent.com/ntoporcov/openclient/main/OpenCodeIOSClient/Assets.xcassets/AppIcon.appiconset/icon-1024.png",
       "versions": [
         {
+          "version": "1.0.21",
+          "buildVersion": "32",
+          "date": "2026-09-21",
+          "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-cadbb5a86e81/OpenClient-Debug.ipa",
+          "size": 51991852,
+          "localizedDescription": "Upstream commit cadbb5a86e81784f5ae91f57213f195e4ee73987"
+        },
+        {
           "version": "0.0.1",
           "date": "2026-09-21",
           "downloadURL": "https://github.com/wes1993/altstore-repo/releases/download/openclient-491a4d92647f/OpenClient-Personal.ipa",
