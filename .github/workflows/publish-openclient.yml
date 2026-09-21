@@ -1,0 +1,143 @@
+name: Publish Personal OpenClient
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: openclient-personal-publisher
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      build: ${{ steps.check.outputs.build }}
+      sha: ${{ steps.check.outputs.sha }}
+      version: ${{ steps.check.outputs.version }}
+      date: ${{ steps.check.outputs.date }}
+    steps:
+      - id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          DATA="$(curl -fsSL https://api.github.com/repos/ntoporcov/openclient/commits/main)"
+          SHA="$(jq -r .sha <<<"$DATA")"
+          DATE="$(jq -r .commit.committer.date <<<"$DATA")"
+          NOW="$(date -u +%s)"
+          THEN="$(date -u -d "$DATE" +%s)"
+          AGE=$((NOW-THEN))
+          CURRENT="$(curl -fsSL https://raw.githubusercontent.com/wes1993/altstore-repo/main/state/upstream-sha.txt 2>/dev/null || true)"
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+          echo "date=$DATE" >> "$GITHUB_OUTPUT"
+          echo "version=0.0.${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
+          if [ "$SHA" != "$CURRENT" ] && [ "$AGE" -ge 14400 ]; then
+            echo "build=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "build=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    needs: check
+    if: needs.check.outputs.build == 'true'
+    runs-on: macos-15
+    steps:
+      - name: Checkout upstream
+        uses: actions/checkout@v4
+        with:
+          repository: ntoporcov/openclient
+          ref: ${{ needs.check.outputs.sha }}
+
+      - name: Select latest Xcode
+        run: |
+          LATEST_XCODE="$(ls -d /Applications/Xcode*.app | sort -V | tail -1)"
+          sudo xcode-select -s "$LATEST_XCODE/Contents/Developer"
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate project
+        env:
+          INCLUDE_PROJECT_LOCAL_YAML: "0"
+        run: xcodegen generate
+
+      - name: Build personal Debug app
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project OpenCodeIOSClient.xcodeproj \
+            -scheme OpenCodeIOSClient \
+            -configuration Debug \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: Package IPA
+        run: |
+          APP_PATH="$(find "$RUNNER_TEMP/DerivedData/Build/Products/Debug-iphoneos" -maxdepth 1 -name '*.app' -print -quit)"
+          test -n "$APP_PATH"
+          mkdir Payload
+          cp -R "$APP_PATH" Payload/
+          zip -qry OpenClient-Personal.ipa Payload
+          echo "IPA_SIZE=$(stat -f%z OpenClient-Personal.ipa)" >> "$GITHUB_ENV"
+
+      - name: Checkout source repository
+        uses: actions/checkout@v4
+        with:
+          path: source-repo
+
+      - name: Publish release and update AltSource
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPSTREAM_SHA: ${{ needs.check.outputs.sha }}
+          UPSTREAM_DATE: ${{ needs.check.outputs.date }}
+          VERSION: ${{ needs.check.outputs.version }}
+        run: |
+          set -euo pipefail
+          cd source-repo
+          TAG="openclient-${UPSTREAM_SHA:0:12}"
+          cp ../OpenClient-Personal.ipa .
+          gh release create "$TAG" OpenClient-Personal.ipa \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "OpenClient Personal ${UPSTREAM_SHA:0:7}" \
+            --notes "Automated personal build from upstream commit ${UPSTREAM_SHA}."
+          URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/$TAG/OpenClient-Personal.ipa"
+          DATE="$(date -u +%Y-%m-%d)"
+          jq --arg version "$VERSION" \
+             --arg date "$DATE" \
+             --arg url "$URL" \
+             --arg sha "$UPSTREAM_SHA" \
+             --argjson size "$IPA_SIZE" \
+             '.apps = [{
+               "name":"OpenClient",
+               "bundleIdentifier":"com.ntoporcov.openclient",
+               "developerName":"OpenClient",
+               "subtitle":"Personal non-commercial build",
+               "localizedDescription":"Automated personal build from the upstream OpenClient source.",
+               "iconURL":"https://raw.githubusercontent.com/ntoporcov/openclient/main/OpenCodeIOSClient/Assets.xcassets/AppIcon.appiconset/icon-1024.png",
+               "versions":[{
+                 "version":$version,
+                 "date":$date,
+                 "downloadURL":$url,
+                 "size":$size,
+                 "localizedDescription":("Upstream commit " + $sha)
+               }]
+             }]' apps.json > apps.tmp
+          mv apps.tmp apps.json
+          mkdir -p state
+          printf '%s\n' "$UPSTREAM_SHA" > state/upstream-sha.txt
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add apps.json state/upstream-sha.txt
+          git commit -m "Publish OpenClient $TAG"
+          git push
