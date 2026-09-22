@@ -9,7 +9,7 @@
       "developerName": "OpenClient",
       "subtitle": "Personal non-commercial build",
       "localizedDescription": "Automated personal build from the upstream OpenClient source.",
-      "iconURL": "https://raw.githubusercontent.com/ntoporcov/openclient/main/OpenCodeIOSClient/Assets.xcassets/AppIcon.appiconset/icon-1024.png",
+      "iconURL": "https://raw.githubusercontent.com/ntoporcov/openclient/main/OpenCodeIOSClient/Assets.xcassets/AppIcon.appiconset/ios-1024.png",
       "versions": [
         {
           "version": "1.0.21",
