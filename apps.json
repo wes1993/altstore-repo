@@ -21,14 +21,6 @@
         },
         {
           "version": "1.0.21",
-          "buildVersion": "40",
-          "date": "2026-09-22",
-          "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-52fb381cb37e/OpenClient-Debug.ipa",
-          "size": 52443212,
-          "localizedDescription": "Add provider display settings and default usage visibility for build 40\n\nUpstream commit: 52fb381cb37eaf93422287ccf64379918f51a13b"
-        },
-        {
-          "version": "1.0.21",
           "buildVersion": "32",
           "date": "2026-09-21",
           "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-cadbb5a86e81/OpenClient-Debug.ipa",
