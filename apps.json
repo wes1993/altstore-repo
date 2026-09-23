@@ -16,8 +16,8 @@
           "buildVersion": "40",
           "date": "2026-09-23",
           "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-be343acdfac2/OpenClient-Debug.ipa",
-          "size": 52445781,
-          "localizedDescription": "Update privacy policy for provider usage\n\nUpstream commit: be343acdfac242ce24a4ba65f3599178496e835f"
+          "size": 52447381,
+          "localizedDescription": "\n\nUpstream commit: be343acdfac242ce24a4ba65f3599178496e835f"
         },
         {
           "version": "1.0.21",
