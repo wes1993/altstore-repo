@@ -12,6 +12,14 @@
       "iconURL": "https://raw.githubusercontent.com/ntoporcov/openclient/main/OpenCodeIOSClient/Assets.xcassets/AppIcon.appiconset/ios-1024.png",
       "versions": [
         {
+          "version": "1.0.22",
+          "buildVersion": "41",
+          "date": "2026-09-26",
+          "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-cae8bedd12d3/OpenClient-Debug.ipa",
+          "size": 52646842,
+          "localizedDescription": "Add OpenCode v2 support and connection settings for build 41\n\nUpstream commit: cae8bedd12d3d2491027e715fd255889603b3a33"
+        },
+        {
           "version": "1.0.21",
           "buildVersion": "40",
           "date": "2026-09-24",
