@@ -51,7 +51,7 @@
       "developerName": "opa334",
       "subtitle": "Rootless semi-untethered jailbreak",
       "localizedDescription": "Dopamine is a rootless semi-untethered jailbreak.",
-      "iconURL": "https://raw.githubusercontent.com/opa334/Dopamine/3.x/Application/Dopamine/Assets.xcassets/AppIcon.appiconset/Icon-64%403x.png",
+      "iconURL": "https://raw.githubusercontent.com/wes1993/altstore-repo/main/assets/dopamine.png",
       "versions": [
         {
           "version": "3.0.10",
