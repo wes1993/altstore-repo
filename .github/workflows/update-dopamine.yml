@@ -36,11 +36,7 @@ jobs:
 
           UPSTREAM = "opa334/Dopamine"
           FEED = Path("apps.json")
-          ICON_URL = (
-              "https://raw.githubusercontent.com/opa334/Dopamine/3.x/"
-              "Application/Dopamine/Assets.xcassets/AppIcon.appiconset/"
-              "Icon-64%403x.png"
-          )
+          ICON_URL = "https://raw.githubusercontent.com/wes1993/altstore-repo/main/assets/dopamine.png"
 
           def github_json(url):
               req = urllib.request.Request(
