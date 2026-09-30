@@ -12,6 +12,14 @@
       "iconURL": "https://raw.githubusercontent.com/ntoporcov/openclient/main/OpenCodeIOSClient/Assets.xcassets/AppIcon.appiconset/ios-1024.png",
       "versions": [
         {
+          "version": "1.0.23",
+          "buildVersion": "\\1.85",
+          "date": "2026-09-30",
+          "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-5e315ab7f135/OpenClient-Debug.ipa",
+          "size": 53475822,
+          "localizedDescription": "Add configurable tool grouping and context markers for build 50\n\nUpstream commit: 5e315ab7f135bb319cec368182b851770d77969e"
+        },
+        {
           "version": "1.0.22",
           "buildVersion": "\\1.81",
           "date": "2026-09-29",
