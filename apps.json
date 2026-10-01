@@ -15,9 +15,9 @@
           "version": "1.0.23",
           "buildVersion": "60",
           "date": "2026-10-01",
-          "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-4b39c9fd89da/OpenClient-Debug.ipa",
-          "size": 53747166,
-          "localizedDescription": "Add workspace tabs to the chat header popover\n\nUpstream commit: 4b39c9fd89da68e4d04c1dccfd75408d0f0d2423"
+          "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-7729d092ccfa/OpenClient-Debug.ipa",
+          "size": 53746281,
+          "localizedDescription": "Keep background reconciliation errors in diagnostics and refresh store metadata\n\nUpstream commit: 7729d092ccfa680d99da0aed1dfe3f995add00d3"
         },
         {
           "version": "1.0.23",
