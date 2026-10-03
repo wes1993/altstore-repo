@@ -12,6 +12,14 @@
       "iconURL": "https://raw.githubusercontent.com/ntoporcov/openclient/main/OpenCodeIOSClient/Assets.xcassets/AppIcon.appiconset/ios-1024.png",
       "versions": [
         {
+          "version": "1.0.24",
+          "buildVersion": "68",
+          "date": "2026-10-03",
+          "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-32e4b555c33d/OpenClient-Debug.ipa",
+          "size": 54224779,
+          "localizedDescription": "Add 3D status pill, turn diffs, and stable chat history for 1.0.24\n\nUpstream commit: 32e4b555c33d8c75c98736de1e488b5079964eed"
+        },
+        {
           "version": "1.0.23",
           "buildVersion": "60",
           "date": "2026-10-01",
