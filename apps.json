@@ -13,6 +13,14 @@
       "versions": [
         {
           "version": "1.0.24",
+          "buildVersion": "\\1.103",
+          "date": "2026-10-03",
+          "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-32e4b555c33d/OpenClient-Debug.ipa",
+          "size": 54193768,
+          "localizedDescription": "\n\nUpstream commit: 32e4b555c33d8c75c98736de1e488b5079964eed"
+        },
+        {
+          "version": "1.0.24",
           "buildVersion": "68",
           "date": "2026-10-03",
           "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-32e4b555c33d/OpenClient-Debug.ipa",
