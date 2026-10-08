@@ -14,10 +14,10 @@
         {
           "version": "1.0.24",
           "buildVersion": "70",
-          "date": "2026-10-06",
-          "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-94f2f36154ba/OpenClient-Debug.ipa",
-          "size": 54251211,
-          "localizedDescription": "Bump TestFlight build to 70\n\nUpstream commit: 94f2f36154ba31f9cb6864cbc424504d2719cca6"
+          "date": "2026-10-08",
+          "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-c8351d547811/OpenClient-Debug.ipa",
+          "size": 54276898,
+          "localizedDescription": "Improve Catalyst performance and fix the Mac paywall crash\nPerformance\n- Run SwiftData cache writes off the main thread by creating the model\n  actor on a utility queue; its executor was bound to the main thread.\n- Share rendered completed-message documents across recycled transcript\n  cells instead of re-parsing markdown and re-highlighting code per cell.\n- Skip syntax highlighting for the code block that is still streaming.\n- Hash tool payloads for render signatures instead of JSON-encoding them,\n  and reuse row signatures computed once per update.\n- Evict render caches gradually instead of clearing them at the limit.\n- Count presentation messages without assembling every envelope.\n- Memoize model release-date parsing and message link detection.\n- Sort recent sessions by small keys and bucket Activity rows once.\n- Reuse 3D thinking pill materials instead of rebuilding them per frame,\n  and avoid observable writes on every RealityView update.\n\nFixes\n- Mac Catalyst: load the paywall icon from the bundled .icns. Asking\n  UIKit for the Icon Composer app icon by name raised an uncatchable\n  exception, crashing the app whenever the paywall appeared.\n\nProduct\n- Remove the chat activity shimmer and its setting.\n\nDiagnostics\n- Add signposts on chat hot paths and an opt-in main-thread stall\n  logger plus session-switch timeline (OpenClientPerformanceDiagnosticsEnabled).\n- Add a Profile build configuration: optimized, with DEBUG kept.\n\nUpstream commit: c8351d547811eb4c6d9101b1f6d4c295ea3d2485"
         },
         {
           "version": "1.0.24",
