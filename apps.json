@@ -14,10 +14,10 @@
         {
           "version": "1.0.24",
           "buildVersion": "76",
-          "date": "2026-10-08",
-          "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-72f0c5083df1/OpenClient-Debug.ipa",
-          "size": 54478451,
-          "localizedDescription": "Add interactive chat comfort announcement for build 76\n\nUpstream commit: 72f0c5083df1e05a9fceb06f4e9465e0e187864c"
+          "date": "2026-10-13",
+          "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-10813319c690/OpenClient-Debug.ipa",
+          "size": 54529185,
+          "localizedDescription": "Merge pull request #27 from ntoporcov/fix/lifetime-price-2999\nUpdate Pro Lifetime price to $29.99 on site\n\nUpstream commit: 10813319c690c32ee1920de6fb6622e4d4a40ea5"
         },
         {
           "version": "1.0.24",
