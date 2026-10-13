@@ -278,6 +278,14 @@
       "iconURL": "https://raw.githubusercontent.com/wes1993/altstore-repo/main/assets/dopamine.png",
       "versions": [
         {
+          "version": "3.0.11",
+          "buildVersion": "1",
+          "date": "2026-10-12",
+          "downloadURL": "https://github.com/opa334/Dopamine/releases/download/3.0.11/Dopamine.ipa",
+          "size": 55420987,
+          "localizedDescription": "- Fix support for iOS 26.0 beta 1 [3.0.1 regression]\r\n- Fix boot logo not being cleaned up correctly before backboardd starts, fixes framebuffer getting stuck with it's last content during sbreload when a boot logo is used (now the screen will correctly fade to a black screen like when no boot logo is used)\r\n- Update opainject and litehook"
+        },
+        {
           "version": "3.0.10",
           "buildVersion": "1",
           "date": "2026-09-23",
