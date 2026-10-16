@@ -12,6 +12,14 @@
       "iconURL": "https://raw.githubusercontent.com/ntoporcov/openclient/main/OpenCodeIOSClient/Assets.xcassets/AppIcon.appiconset/ios-1024.png",
       "versions": [
         {
+          "version": "1.0.25",
+          "buildVersion": "79",
+          "date": "2026-10-16",
+          "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-0090d601b2e3/OpenClient-Debug.ipa",
+          "size": 55018532,
+          "localizedDescription": "Prepare 1.0.25 build 79 with restored Activity announcement and new store creatives\n\nUpstream commit: 0090d601b2e312be01f6e089b218084bdce837b7"
+        },
+        {
           "version": "1.0.24",
           "buildVersion": "\\1.158",
           "date": "2026-10-15",
