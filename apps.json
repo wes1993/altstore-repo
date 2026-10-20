@@ -326,6 +326,14 @@
       "iconURL": "https://raw.githubusercontent.com/wes1993/altstore-repo/main/assets/dopamine.png",
       "versions": [
         {
+          "version": "3.0.12",
+          "buildVersion": "1",
+          "date": "2026-10-20",
+          "downloadURL": "https://github.com/opa334/Dopamine/releases/download/3.0.12/Dopamine.ipa",
+          "size": 55420784,
+          "localizedDescription": "- Add workaround for stock issue that causes touch not to work on certain A10/A11 aftermarket screens after a userspace reboot (Contributed by @moezemara)\r\n- Fix some system preference plists being redirected to /var/jb in rootlesshook (Contributed by @verygenericname)"
+        },
+        {
           "version": "3.0.11",
           "buildVersion": "1",
           "date": "2026-10-12",
