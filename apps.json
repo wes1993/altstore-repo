@@ -12,6 +12,14 @@
       "iconURL": "https://raw.githubusercontent.com/ntoporcov/openclient/main/OpenCodeIOSClient/Assets.xcassets/AppIcon.appiconset/ios-1024.png",
       "versions": [
         {
+          "version": "1.0.27",
+          "buildVersion": "84",
+          "date": "2026-10-26",
+          "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-309c94e45094/OpenClient-Debug.ipa",
+          "size": 60582311,
+          "localizedDescription": "Add live subagent activity bar and navigable agent sheet\n\nUpstream commit: 309c94e45094b04ba6b0ec82a9c57f2f35e5947e"
+        },
+        {
           "version": "1.0.25",
           "buildVersion": "\\1.173",
           "date": "2026-10-17",
