@@ -12,6 +12,14 @@
       "iconURL": "https://raw.githubusercontent.com/ntoporcov/openclient/main/OpenCodeIOSClient/Assets.xcassets/AppIcon.appiconset/ios-1024.png",
       "versions": [
         {
+          "version": "1.0.28",
+          "buildVersion": "92",
+          "date": "2026-10-30",
+          "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-4dedc814bd38/OpenClient-Debug.ipa",
+          "size": 60965524,
+          "localizedDescription": "Release 1.0.28 with cleanup sheets and stable native navigation\nAdd server-wide cleanup with swipe review and read-only transcripts, refine agent conversations and compaction, fix table rendering and terminal popovers, and preserve the verified 1.0.27 navigation baseline. Include localized announcements, App Store release notes, and regression coverage for build 92.\n\nUpstream commit: 4dedc814bd38d3daa5a53bff01d75209f2865502"
+        },
+        {
           "version": "1.0.27",
           "buildVersion": "84",
           "date": "2026-10-26",
