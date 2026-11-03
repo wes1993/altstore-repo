@@ -342,6 +342,14 @@
       "iconURL": "https://raw.githubusercontent.com/wes1993/altstore-repo/main/assets/dopamine.png",
       "versions": [
         {
+          "version": "3.0.13",
+          "buildVersion": "1",
+          "date": "2026-11-03",
+          "downloadURL": "https://github.com/opa334/Dopamine/releases/download/3.0.13/Dopamine.ipa",
+          "size": 55422988,
+          "localizedDescription": "- FIx a bug in `posix_spawn` hook where changes to the passed attribute structure would persist after the function returned, causing unwanted behavior to happen when the caller reuses the same attribute structure for another call (In practice this fixes Zebra not working properly on iOS 17.6+)\r\n- Improve logic that redirects SpringBoard snapshots in rootlesshook (Contributed by @verygenericname)"
+        },
+        {
           "version": "3.0.12",
           "buildVersion": "1",
           "date": "2026-10-20",
