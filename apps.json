@@ -13,6 +13,14 @@
       "versions": [
         {
           "version": "1.0.29",
+          "buildVersion": "95",
+          "date": "2026-11-04",
+          "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-14c60adc606c/OpenClient-Debug.ipa",
+          "size": 61020489,
+          "localizedDescription": "Sync generated Xcode project for build 95\n\nUpstream commit: 14c60adc606c161fb5dd448f67e1a9576ab7cc0b"
+        },
+        {
+          "version": "1.0.29",
           "buildVersion": "94",
           "date": "2026-11-04",
           "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-ace100006c59/OpenClient-Debug.ipa",
