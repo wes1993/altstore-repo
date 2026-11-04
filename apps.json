@@ -12,6 +12,14 @@
       "iconURL": "https://raw.githubusercontent.com/ntoporcov/openclient/main/OpenCodeIOSClient/Assets.xcassets/AppIcon.appiconset/ios-1024.png",
       "versions": [
         {
+          "version": "1.0.29",
+          "buildVersion": "94",
+          "date": "2026-11-04",
+          "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-ace100006c59/OpenClient-Debug.ipa",
+          "size": 60973568,
+          "localizedDescription": "Fix iOS 26 chat invalidation and prepare 1.0.29 release\n\nUpstream commit: ace100006c594458b39cad92c0025c3941f25cee"
+        },
+        {
           "version": "1.0.28",
           "buildVersion": "92",
           "date": "2026-10-30",
