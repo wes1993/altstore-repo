@@ -12,6 +12,14 @@
       "iconURL": "https://raw.githubusercontent.com/ntoporcov/openclient/main/OpenCodeIOSClient/Assets.xcassets/AppIcon.appiconset/ios-1024.png",
       "versions": [
         {
+          "version": "1.0.30",
+          "buildVersion": "96",
+          "date": "2026-11-05",
+          "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-12a87ac4316d/OpenClient-Debug.ipa",
+          "size": 61151063,
+          "localizedDescription": "Add transcript image previews, metadata, and native actions\n\nUpstream commit: 12a87ac4316d7f4522620f2c135f42e269eccd68"
+        },
+        {
           "version": "1.0.29",
           "buildVersion": "95",
           "date": "2026-11-04",
