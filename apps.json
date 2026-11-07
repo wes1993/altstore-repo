@@ -13,6 +13,14 @@
       "versions": [
         {
           "version": "1.0.30",
+          "buildVersion": "101",
+          "date": "2026-11-07",
+          "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-f9f391d7b290/OpenClient-Debug.ipa",
+          "size": 63012782,
+          "localizedDescription": "Remove Duo hint from remote desktop options\n\nUpstream commit: f9f391d7b29078e2807a6a6bcd4be34dccfcb840"
+        },
+        {
+          "version": "1.0.30",
           "buildVersion": "96",
           "date": "2026-11-05",
           "downloadURL": "https://github.com/wes1993/OpenClient_Debug/releases/download/openclient-12a87ac4316d/OpenClient-Debug.ipa",
