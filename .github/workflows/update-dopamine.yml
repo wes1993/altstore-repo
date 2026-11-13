@@ -1,3 +1,4 @@
+
 name: Update Dopamine
 
 on:
@@ -20,7 +21,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Update Dopamine in apps.json
+      - name: Update Dopamine apps in apps.json
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -28,15 +29,50 @@ jobs:
           import json
           import os
           import plistlib
+          import re
           import tempfile
           import urllib.request
           import zipfile
           from datetime import datetime
           from pathlib import Path
 
-          UPSTREAM = "opa334/Dopamine"
           FEED = Path("apps.json")
-          ICON_URL = "https://raw.githubusercontent.com/wes1993/altstore-repo/main/assets/dopamine.png"
+
+          UPSTREAMS = [
+              {
+                  "repo": "opa334/Dopamine",
+                  "name": "Dopamine",
+                  "bundle_identifier": "com.opa334.Dopamine",
+                  "developer_name": "opa334",
+                  "subtitle": "Rootless semi-untethered jailbreak",
+                  "localized_description": (
+                      "Dopamine is a rootless semi-untethered jailbreak."
+                  ),
+                  "icon_url": (
+                      "https://raw.githubusercontent.com/"
+                      "wes1993/altstore-repo/main/assets/dopamine.png"
+                  ),
+                  "asset_pattern": r"^Dopamine\.ipa$",
+              },
+              {
+                  "repo": "roothide/Dopamine-roothide",
+                  "name": "Dopamine RootHide",
+                  "bundle_identifier": "com.opa334.Dopamine-roothide",
+                  "developer_name": "roothide",
+                  "subtitle": "RootHide variant of the Dopamine jailbreak",
+                  "localized_description": (
+                      "Dopamine RootHide is the RootHide variant "
+                      "of the Dopamine jailbreak."
+                  ),
+                  "icon_url": (
+                      "https://raw.githubusercontent.com/"
+                      "roothide/Dopamine-roothide/3.x/"
+                      "Application/Dopamine/Assets.xcassets/"
+                      "AppIcon.appiconset/Icon-60%403x.png"
+                  ),
+                  "asset_pattern": r"^Dopamine-roothide-.*\.ipa$",
+              },
+          ]
 
           def github_json(url):
               req = urllib.request.Request(
@@ -48,162 +84,248 @@ jobs:
                       "X-GitHub-Api-Version": "2022-11-28",
                   },
               )
-              with urllib.request.urlopen(req) as response:
+              with urllib.request.urlopen(req, timeout=60) as response:
                   return json.load(response)
 
-          release = github_json(
-              f"https://api.github.com/repos/{UPSTREAM}/releases/latest"
-          )
-
-          if release.get("draft") or release.get("prerelease"):
-              raise RuntimeError("Latest Dopamine release is not a stable release")
-
-          tag = str(release["tag_name"])
-          published_at = release["published_at"]
-          notes = (release.get("body") or "").strip()
-
-          ipa_asset = next(
-              (
-                  asset
-                  for asset in release.get("assets", [])
-                  if str(asset.get("name", "")).lower() == "dopamine.ipa"
-              ),
-              None,
-          )
-
-          if not ipa_asset:
-              raise RuntimeError(f"Dopamine.ipa not found in release {tag}")
-
-          download_url = ipa_asset["browser_download_url"]
-
-          with tempfile.TemporaryDirectory() as tmp:
-              ipa_path = Path(tmp) / "Dopamine.ipa"
-
-              req = urllib.request.Request(
-                  download_url,
-                  headers={"User-Agent": "wes1993-altstore-repo"},
+          def ensure_app(apps, config):
+              app = next(
+                  (
+                      item
+                      for item in apps
+                      if item.get("bundleIdentifier")
+                      == config["bundle_identifier"]
+                      or item.get("name") == config["name"]
+                  ),
+                  None,
               )
 
-              with urllib.request.urlopen(req) as response:
-                  ipa_path.write_bytes(response.read())
+              metadata = {
+                  "name": config["name"],
+                  "bundleIdentifier": config["bundle_identifier"],
+                  "developerName": config["developer_name"],
+                  "subtitle": config["subtitle"],
+                  "localizedDescription": config["localized_description"],
+                  "iconURL": config["icon_url"],
+              }
 
-              size = ipa_path.stat().st_size
+              changed = False
 
-              with zipfile.ZipFile(ipa_path) as archive:
-                  plist_names = [
-                      name
-                      for name in archive.namelist()
-                      if name.startswith("Payload/")
-                      and name.endswith(".app/Info.plist")
-                      and name.count("/") == 2
-                  ]
+              if app is None:
+                  app = {**metadata, "versions": []}
+                  apps.append(app)
+                  changed = True
+              else:
+                  for key in ("name", "bundleIdentifier"):
+                      if app.get(key) != metadata[key]:
+                          app[key] = metadata[key]
+                          changed = True
 
-                  if not plist_names:
-                      raise RuntimeError("Info.plist not found inside Dopamine.ipa")
+                  for key in (
+                      "developerName",
+                      "subtitle",
+                      "localizedDescription",
+                  ):
+                      if key not in app:
+                          app[key] = metadata[key]
+                          changed = True
 
-                  info = plistlib.loads(archive.read(plist_names[0]))
+                  if app.get("iconURL") != metadata["iconURL"]:
+                      app["iconURL"] = metadata["iconURL"]
+                      changed = True
 
-          bundle_identifier = str(info.get("CFBundleIdentifier") or "").strip()
-          if not bundle_identifier:
-              raise RuntimeError("CFBundleIdentifier missing from Dopamine.ipa")
+              versions = app.setdefault("versions", [])
 
-          version = str(
-              info.get("CFBundleShortVersionString")
-              or tag.lstrip("v")
-          ).strip()
+              if not isinstance(versions, list):
+                  raise RuntimeError(
+                      f"Invalid versions list for {config['name']}"
+                  )
 
-          build_version = str(
-              info.get("CFBundleVersion")
-              or version
-          ).strip()
+              return app, changed
 
-          date = (
-              datetime
-              .fromisoformat(published_at.replace("Z", "+00:00"))
-              .date()
-              .isoformat()
-          )
+          def get_latest_release_asset(config):
+              release = github_json(
+                  f"https://api.github.com/repos/{config['repo']}/releases/latest"
+              )
+
+              if release.get("draft") or release.get("prerelease"):
+                  raise RuntimeError(
+                      f"Latest {config['name']} release is not stable"
+                  )
+
+              ipa_asset = next(
+                  (
+                      asset
+                      for asset in release.get("assets", [])
+                      if re.fullmatch(
+                          config["asset_pattern"],
+                          str(asset.get("name", "")),
+                          flags=re.IGNORECASE,
+                      )
+                  ),
+                  None,
+              )
+
+              if not ipa_asset:
+                  raise RuntimeError(
+                      f"No matching IPA asset found for {config['name']} "
+                      f"in release {release.get('tag_name')}"
+                  )
+
+              return release, ipa_asset
+
+          def read_ipa_metadata(config, release, ipa_asset):
+              download_url = ipa_asset["browser_download_url"]
+
+              with tempfile.TemporaryDirectory() as tmp:
+                  ipa_path = Path(tmp) / "release.ipa"
+
+                  req = urllib.request.Request(
+                      download_url,
+                      headers={"User-Agent": "wes1993-altstore-repo"},
+                  )
+
+                  with urllib.request.urlopen(req, timeout=180) as response:
+                      ipa_path.write_bytes(response.read())
+
+                  size = ipa_path.stat().st_size
+
+                  with zipfile.ZipFile(ipa_path) as archive:
+                      plist_names = [
+                          name
+                          for name in archive.namelist()
+                          if name.startswith("Payload/")
+                          and name.endswith(".app/Info.plist")
+                          and name.count("/") == 2
+                      ]
+
+                      if not plist_names:
+                          raise RuntimeError(
+                              f"Info.plist not found in {config['name']} IPA"
+                          )
+
+                      info = plistlib.loads(
+                          archive.read(plist_names[0])
+                      )
+
+              bundle_identifier = str(
+                  info.get("CFBundleIdentifier") or ""
+              ).strip()
+
+              if bundle_identifier != config["bundle_identifier"]:
+                  raise RuntimeError(
+                      f"Unexpected bundle identifier for {config['name']}: "
+                      f"{bundle_identifier!r}"
+                  )
+
+              version = str(
+                  info.get("CFBundleShortVersionString")
+                  or release["tag_name"].lstrip("v")
+              ).strip()
+
+              build_version = str(
+                  info.get("CFBundleVersion") or version
+              ).strip()
+
+              date = (
+                  datetime.fromisoformat(
+                      release["published_at"].replace("Z", "+00:00")
+                  )
+                  .date()
+                  .isoformat()
+              )
+
+              return {
+                  "version": version,
+                  "build_version": build_version,
+                  "date": date,
+                  "download_url": download_url,
+                  "size": size,
+                  "notes": (release.get("body") or "").strip(),
+              }
 
           with FEED.open("r", encoding="utf-8") as f:
               feed = json.load(f)
 
           apps = feed.setdefault("apps", [])
 
-          dopamine = next(
-              (
-                  app
-                  for app in apps
-                  if app.get("name") == "Dopamine"
-                  or app.get("bundleIdentifier") == bundle_identifier
-              ),
-              None,
-          )
-
-          if dopamine is None:
-              dopamine = {
-                  "name": "Dopamine",
-                  "bundleIdentifier": bundle_identifier,
-                  "developerName": "opa334",
-                  "subtitle": "Rootless semi-untethered jailbreak",
-                  "localizedDescription": (
-                      "Dopamine is a rootless semi-untethered jailbreak."
-                  ),
-                  "iconURL": ICON_URL,
-                  "versions": [],
-              }
-              apps.append(dopamine)
-          else:
-              dopamine["bundleIdentifier"] = bundle_identifier
-              dopamine.setdefault("developerName", "opa334")
-              dopamine.setdefault(
-                  "subtitle",
-                  "Rootless semi-untethered jailbreak",
+          if not isinstance(apps, list):
+              raise RuntimeError(
+                  "The 'apps' field in apps.json must be a list"
               )
-              dopamine.setdefault(
-                  "localizedDescription",
-                  "Dopamine is a rootless semi-untethered jailbreak.",
+
+          changed = False
+
+          for config in UPSTREAMS:
+              app, metadata_changed = ensure_app(apps, config)
+              changed = metadata_changed or changed
+
+              release, ipa_asset = get_latest_release_asset(config)
+              download_url = ipa_asset["browser_download_url"]
+              versions = app["versions"]
+
+              # Avoid downloading an IPA already present in the feed.
+              if any(
+                  entry.get("downloadURL") == download_url
+                  for entry in versions
+              ):
+                  print(
+                      f"{config['name']}: latest IPA already listed; "
+                      "skipping download."
+                  )
+                  continue
+
+              release_data = read_ipa_metadata(
+                  config, release, ipa_asset
               )
-              dopamine["iconURL"] = ICON_URL
 
-          versions = dopamine.setdefault("versions", [])
-
-          already_present = any(
-              (
-                  entry.get("version") == version
-                  and str(entry.get("buildVersion")) == build_version
+              already_present = any(
+                  entry.get("version") == release_data["version"]
+                  and str(entry.get("buildVersion"))
+                  == release_data["build_version"]
+                  for entry in versions
               )
-              or entry.get("downloadURL") == download_url
-              for entry in versions
-          )
 
-          if already_present:
+              if already_present:
+                  print(
+                      f"{config['name']} {release_data['version']} "
+                      f"({release_data['build_version']}) already present."
+                  )
+                  continue
+
+              versions.insert(
+                  0,
+                  {
+                      "version": release_data["version"],
+                      "buildVersion": release_data["build_version"],
+                      "date": release_data["date"],
+                      "downloadURL": release_data["download_url"],
+                      "size": release_data["size"],
+                      "localizedDescription": (
+                          release_data["notes"]
+                          or f"{config['name']} {release_data['version']}"
+                      ),
+                  },
+              )
+
+              changed = True
+
               print(
-                  f"Dopamine {version} ({build_version}) already present; "
-                  "no feed change required."
+                  f"Added {config['name']} "
+                  f"{release_data['version']} "
+                  f"({release_data['build_version']}) "
+                  f"from release {release['tag_name']}."
               )
-              raise SystemExit(0)
+              print(f"Bundle identifier: {config['bundle_identifier']}")
+              print(f"Download URL: {release_data['download_url']}")
 
-          entry = {
-              "version": version,
-              "buildVersion": build_version,
-              "date": date,
-              "downloadURL": download_url,
-              "size": size,
-              "localizedDescription": notes or f"Dopamine {version}",
-          }
+          if changed:
+              with FEED.open("w", encoding="utf-8") as f:
+                  json.dump(feed, f, indent=2, ensure_ascii=False)
+                  f.write("\n")
 
-          versions.insert(0, entry)
-
-          with FEED.open("w", encoding="utf-8") as f:
-              json.dump(feed, f, indent=2, ensure_ascii=False)
-              f.write("\n")
-
-          print(
-              f"Added Dopamine {version} ({build_version}) "
-              f"from official release {tag}"
-          )
-          print(f"Bundle identifier: {bundle_identifier}")
-          print(f"Download URL: {download_url}")
+              print("apps.json updated.")
+          else:
+              print("No changes required.")
           PY
 
       - name: Commit changes
@@ -217,5 +339,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add apps.json
-          git commit -m "Update Dopamine"
+          git commit -m "Update Dopamine and Dopamine RootHide"
           git push
