@@ -406,6 +406,24 @@
           "localizedDescription": "- Expose an API to frida that allows it to hook memory over hookd, fixes panics when using frida on iOS 26+ (Requires frida >=17.19.0) (contributed by @devnoname120)\r\n- Fix Xcode debugging being broken on iOS 17+ after a userspace reboot if a developer disk image was already mounted before the userspace reboot"
         }
       ]
+    },
+    {
+      "name": "Dopamine RootHide",
+      "bundleIdentifier": "com.opa334.Dopamine-roothide",
+      "developerName": "roothide",
+      "subtitle": "RootHide variant of the Dopamine jailbreak",
+      "localizedDescription": "Dopamine RootHide is the RootHide variant of the Dopamine jailbreak.",
+      "iconURL": "https://raw.githubusercontent.com/roothide/Dopamine-roothide/3.x/Application/Dopamine/Assets.xcassets/AppIcon.appiconset/Icon-60%403x.png",
+      "versions": [
+        {
+          "version": "3.0.13-30",
+          "buildVersion": "1",
+          "date": "2026-11-06",
+          "downloadURL": "https://github.com/roothide/Dopamine-roothide/releases/download/30/Dopamine-roothide-3.0.13-30.ipa",
+          "size": 55348740,
+          "localizedDescription": "bug fixes and stability enhancements"
+        }
+      ]
     }
   ],
   "news": []
